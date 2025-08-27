@@ -3,10 +3,13 @@ import { problemDto } from "../dto/problemDto";
 
 const prisma = new PrismaClient()
 
-export interface IProblem {
+export interface IProblemRepo {
     createProblem(problem : problemDto ) : Promise<any>
 }
-export class ProblemRepo implements IProblem {
+
+
+export class ProblemRepo implements IProblemRepo {
+    
     async createProblem(problem: problemDto): Promise<any> {
         const newProblem = await prisma.problem.create({
             data: {

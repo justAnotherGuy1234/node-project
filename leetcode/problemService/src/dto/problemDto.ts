@@ -2,8 +2,8 @@ export type problemDto = {
     title : string
     description : string 
     difficulty : "easy" | "medium" | "hard"
-    testCase : [{
+    testCase : {
         input : string
         output : string 
-    }]
+    }[]
 }

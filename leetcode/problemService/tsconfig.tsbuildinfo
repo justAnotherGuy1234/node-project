@@ -1,0 +1,1 @@
+{"root":["./src/server.ts","./src/controller/problemController.ts","./src/dto/problemDto.ts","./src/repo/problemRepo.ts","./src/route/problemRoute.ts","./src/service/problemService.ts","./src/util/markdown.ts","./src/validator/problemValidator.ts"],"version":"5.8.3"}
