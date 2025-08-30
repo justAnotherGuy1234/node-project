@@ -1,0 +1,1 @@
+{"root":["./src/server.ts","./src/config/redis.ts","./src/controller/bookingController.ts","./src/dto/bookingDto.ts","./src/repo/bookingRepo.ts","./src/router/bookingRouter.ts","./src/service/bookingService.ts"],"version":"5.8.3"}

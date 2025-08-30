@@ -1,0 +1,2 @@
+- using red lock to lock booking when users creates the booking
+- using db lock 
