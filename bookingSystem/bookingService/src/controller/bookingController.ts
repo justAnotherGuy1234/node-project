@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import {v4 as uuidV4} from "uuid"
-import { createBookingService } from "../service/bookingService";
+import { confirmBookingService, createBookingService } from "../service/bookingService";
 
 export async function createBookingController(req : Request , res : Response) : Promise<any> {
     try {
@@ -25,6 +25,23 @@ export async function createBookingController(req : Request , res : Response) : 
         })
     } catch (e : any) {
        console.log("error in create booking controller" , e) 
-       return res.status(500).json({msg : "Internal server errro" , error :  e || "unknown error"})
+       return res.status(500).json({msg : "Internal server error" , error :  e || "unknown error"})
+    }
+}
+
+export async function confirmBookingController(req : Request , res : Response) :Promise<any> {
+    try {
+       const {bookingId, userId , hotelId ,  idempotencyKey} = req.body 
+
+       const booking = await confirmBookingService({bookingId , userId , hotelId , idempotencyKey})
+
+       if(!booking){
+        return res.status(500).json("failed to confrim booking")
+       }
+
+       
+       return res.json(booking)
+    } catch (e : any) {
+        return res.status(500).json({msg : "Internal server error test" , error : e || "unkown error"})
     }
 }

@@ -1,10 +1,10 @@
 import { v4 as uuidV4, validate } from "uuid"
 import { confirmBookingDto, createBookingDto } from "../dto/bookingDto";
-import { createBookingRepo, getBookingById } from "../repo/bookingRepo";
+import { confirmBookingRepo, createBookingRepo, getBookingById, getIdemptencyKeyWithLock } from "../repo/bookingRepo";
 import Redlock from "redlock";
 import { redLock } from "../config/redis";
 import { PrismaClient } from "@prisma/client";
-import {uuid as uuidValidate} from "uuid"
+import { validate as uuidValidate } from "uuid"
 const prisma = new PrismaClient()
 
 export async function createBookingService(data: createBookingDto) {
@@ -32,22 +32,41 @@ export async function createBookingService(data: createBookingDto) {
   }
 }
 
-export async function confirmBooking(data: confirmBookingDto) {
+export async function confirmBookingService(data: confirmBookingDto) {
   try {
-
-    const booking = await prisma.$transaction(async (tx) => {
-
-
-      const bookingId = await getBookingById(data.bookingId)
-
-      if (bookingId.bookingStatus == "CONFIRM") {
-        throw new Error("booking is already confirm")
+    return await prisma.$transaction(async (tx) => {
+      if (!uuidValidate(data.idempotencyKey)) {
+        throw new Error("incorrect idempotency key")
       }
 
+      console.log(data.idempotencyKey, "idempotency key in confirm booking service")
+      const checkBooking = await getIdemptencyKeyWithLock(tx, data.idempotencyKey)
+
+
+      if (!checkBooking) {
+        throw new Error("failed to get idempotency key with lock")
+      }
+
+      const currentBooking = checkBooking[0]
+
+      if (currentBooking.bookingStatus == "CONFIRM") {
+        throw new TypeError("booking is already confirmed")
+      }
+
+      const confirmBooking = await confirmBookingRepo(tx, data.bookingId, data.idempotencyKey, data.hotelId, data.userId)
+
+      if (!confirmBooking) {
+        throw new Error("failed to confirm booking")
+      }
+
+      return confirmBooking
 
     })
-
-  } catch (e) {
-
+  } catch (e : any) {
+    if (e instanceof TypeError){
+      throw "booking is already confirmed"
+    }
+    throw e
   }
 }
+

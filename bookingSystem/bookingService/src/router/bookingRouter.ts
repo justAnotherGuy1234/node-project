@@ -1,8 +1,9 @@
 import express from "express"
-import { createBookingController } from "../controller/bookingController"
+import { confirmBookingController, createBookingController } from "../controller/bookingController"
 
 const router = express.Router()
 
 router.post("/create" , createBookingController)
+router.post("/confirm" , confirmBookingController)
 
 export default router

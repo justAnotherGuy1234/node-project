@@ -4,3 +4,10 @@ export type createBookingDto =  {
     totalGuest : number
     idempotencyKey : string
 }
+
+export type confirmBookingDto = {
+    bookingId : number 
+    userId : number 
+    hotelId : number
+    idempotencyKey : string
+}
