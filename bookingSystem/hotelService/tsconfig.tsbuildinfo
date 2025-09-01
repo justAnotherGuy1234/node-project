@@ -1,0 +1,1 @@
+{"root":["./src/server.ts","./src/controller/hotelController.ts","./src/controller/roomController.ts","./src/dto/hotelDto.ts","./src/dto/roomDto.ts","./src/repo/hotelRepo.ts","./src/repo/roomRepo.ts","./src/router/RoomRouter.ts","./src/router/hotelRouter.ts","./src/service/hotelService.ts","./src/service/roomService.ts"],"version":"5.8.3"}

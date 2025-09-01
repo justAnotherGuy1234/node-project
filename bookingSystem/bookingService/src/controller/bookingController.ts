@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
 import {v4 as uuidV4} from "uuid"
 import { confirmBookingService, createBookingService } from "../service/bookingService";
+import axios from "axios";
 
 export async function createBookingController(req : Request , res : Response) : Promise<any> {
     try {
+
+
         let {userId , hotelId , totalGuest} = req.body
+
 
         const newKey = uuidV4()
 

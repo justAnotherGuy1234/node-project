@@ -1,0 +1,2 @@
+- booking service will store start date , end date , roomType when booking . 
+- after booking created hotelService will check booking table for each day and update number of rooms as they get empty 

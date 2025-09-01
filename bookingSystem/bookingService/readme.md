@@ -1,2 +1,2 @@
 - using red lock to lock booking when users creates the booking
-- using db lock 
+- using db lock to avoid double confirmation booking 
