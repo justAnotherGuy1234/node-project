@@ -1,1 +1,2 @@
 - create docker files for services 
+- add cron job in hotel service to increase room count for each hotel 

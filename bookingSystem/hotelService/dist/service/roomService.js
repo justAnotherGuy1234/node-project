@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createRoomService = createRoomService;
 exports.getRoomByCategoryService = getRoomByCategoryService;
+exports.getRoomService = getRoomService;
 const roomRepo_1 = require("../repo/roomRepo");
 function createRoomService(data) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -38,6 +39,37 @@ function getRoomByCategoryService(category, hotelId) {
         }
         catch (e) {
             console.log("error in get room by category service", e);
+            throw e;
+        }
+    });
+}
+function getRoomService(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const currentDate = new Date;
+            if (data.startDate < currentDate) {
+                throw new Error("start date should be of today or future");
+            }
+            if (data.endDate < data.startDate) {
+                throw new Error("end date cannot be before start date");
+            }
+            const checkRoom = yield (0, roomRepo_1.getRoomByCategoryRepo)(data.roomType, data.hotel);
+            if (!checkRoom) {
+                throw new Error("failed to get room by category");
+            }
+            const room = yield (0, roomRepo_1.createRoomBookingRepo)(data);
+            if (!room) {
+                throw new Error("failed to create new room booking ");
+            }
+            let roomId = checkRoom.id;
+            const updateRoom = yield (0, roomRepo_1.reduceRoomCountRepo)(roomId, room.hotel, room.roomType);
+            if (!updateRoom) {
+                throw new Error("failed to update room count  ");
+            }
+            return room;
+        }
+        catch (e) {
+            console.log('error in get room service ', e);
             throw e;
         }
     });

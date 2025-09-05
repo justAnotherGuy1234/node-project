@@ -22,6 +22,7 @@ model Hotel {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   room Room[]
+  roomBooked RoomBooked[]
 }
 
 model Room {
@@ -35,6 +36,20 @@ model Room {
   createAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model RoomBooked {
+  id Int @id @default(autoincrement())
+  hotel Int
+  userId Int
+  pricePayed Decimal @db.Decimal(8 , 2)
+  startDate DateTime
+  endDate DateTime
+  roomType RoomType 
+  hotelId Hotel @relation(fields: [hotel] , references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 
 enum RoomType {
   SINGLE 

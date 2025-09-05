@@ -11,6 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createRoomRepo = createRoomRepo;
 exports.getRoomByCategoryRepo = getRoomByCategoryRepo;
+exports.createRoomBookingRepo = createRoomBookingRepo;
+exports.reduceRoomCountRepo = reduceRoomCountRepo;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 function createRoomRepo(data) {
@@ -31,14 +33,14 @@ function createRoomRepo(data) {
 function getRoomByCategoryRepo(category, hotelId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const room = yield prisma.room.findMany({
+            const room = yield prisma.room.findFirst({
                 where: {
                     hotel: hotelId,
                     roomType: category,
                     roomCount: { gt: 0 }
                 }
             });
-            if (room.length == 0) {
+            if ((room === null || room === void 0 ? void 0 : room.roomCount) == 0) {
                 throw new Error("no rooms available for this category");
             }
             if (!room) {
@@ -48,6 +50,48 @@ function getRoomByCategoryRepo(category, hotelId) {
         }
         catch (e) {
             console.log("error in get room by category repo", e);
+            throw e;
+        }
+    });
+}
+function createRoomBookingRepo(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const roomBooked = prisma.roomBooked.create({ data: data });
+            if (!roomBooked) {
+                throw new Error("failed to create room booking");
+            }
+            return roomBooked;
+        }
+        catch (e) {
+            console.log("error in get room repo ", e);
+            throw e;
+        }
+    });
+}
+function reduceRoomCountRepo(roomId, hotelId, roomType) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const room = yield prisma.room.update({
+                where: {
+                    id: roomId,
+                    hotel: hotelId,
+                    roomType: roomType,
+                    roomCount: { gt: 0 }
+                },
+                data: {
+                    roomCount: {
+                        decrement: 1
+                    }
+                }
+            });
+            if (!room) {
+                throw new Error("no rooms available in this hotel ");
+            }
+            return room;
+        }
+        catch (e) {
+            console.log("error in reduce room count repo ", e);
             throw e;
         }
     });

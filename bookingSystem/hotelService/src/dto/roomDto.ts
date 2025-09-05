@@ -6,6 +6,11 @@ export type createRoomDto = {
   dataOfAvailability : Date
 }
 
-export type roomTypeDto = {
+export type getRoomDto = {
+  hotel : number
+  userId : number
   roomType : "SINGLE" | "DOUBLE" | "FAMILY"
+  startDate : Date
+  endDate : Date
+  pricePayed : string
 }
