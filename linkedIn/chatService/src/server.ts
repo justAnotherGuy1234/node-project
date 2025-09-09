@@ -20,26 +20,45 @@ const io = new Server(server , {
     }
 })
 
-const userMap = new Map<string , any>()
-
-
+const userMap = new Map<string,any>()
+const userToSocket = new Map<string , any>()
 
 io.on("connection" , (socket)=>{
+    let  rcvSocketId : string
     console.log("connected to socket.io" , socket.id)
 
     socket.on("user-connected" , ({senderName , socketId})=>{
         userMap.set(socketId , senderName)
-        console.log("username , socket id added to map  " , {senderName, socketId})
+        io.emit("socket-added" , Array.from(userMap.keys()) , Array.from(userToSocket.keys()))
     })
 
-    // socket.on("send-msg" , ({senderName , receiverName , msg , socketId})=>{
+    socket.on("send-msg" , ({confirmSenderName , receiverName , socketId , msg})=>{
+        if(userMap.get(socketId) == confirmSenderName){
+            console.log("sender verified" , confirmSenderName)
+        }else {
+            console.log("no user found with this socket id ")
+        }
 
-    //     redis.set(socketId , senderName)
-        
-    //     console.log(senderName , "is sending msg to" , receiverName , "msg is " , msg )
-    //     //todo - db logic 
-    //     socket.emit("rcv-msg" , {senderName , receiverName , msg})
-    // })
+        for(const [key , value] of userMap){
+            if(value == receiverName){
+                rcvSocketId = key
+            }
+        }
+
+        if(rcvSocketId){
+            io.to(rcvSocketId).emit("rcv-msg" , ({confirmSenderName ,  msg }))
+        }
+    })
+
+    socket.on("disconnect" , ()=>{
+        const user = userMap.get(socket.id)
+
+        if(user){
+            userMap.delete(user)
+            console.log("disconnected user deleted from maps")
+        }
+    })
+
 })
 
 

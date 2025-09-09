@@ -8,10 +8,13 @@ const socket = io("http://localhost:4000")
 
 export default function ChatPage() {
     const [senderName, setSenderName] = useState("")
+    const [confirmSenderName , setConfirmSenderName] = useState("")
     const { receiverName } = useParams()
     const [msg, setMsg] = useState("")
     const [socketId , setSocketId] = useState("")
 
+    const [gotMsgFrom , setGotMsgFrom] = useState("")
+    const [gotMsg , setGotMsg] = useState("")
 
     useEffect(() => {
         socket.on("connect", () => {
@@ -19,8 +22,15 @@ export default function ChatPage() {
             setSocketId(socket.id!)
         })
 
-
-        console.log("sender name " , senderName)
+        socket.on("socket-added" , (data)=>{
+            console.log(data)
+        })
+        
+        socket.on("rcv-msg" , ({confirmSenderName , msg}) =>{
+            console.log("got msg from " , confirmSenderName , msg)
+            setGotMsgFrom(confirmSenderName)
+            setGotMsg(msg)
+        })
 
         return () => {
             socket.disconnect()
@@ -28,11 +38,14 @@ export default function ChatPage() {
     }, [])
 
     function submitMsg() {
-        socket.emit("send-msg", { senderName, receiverName, msg })
+        socket.emit("send-msg", { confirmSenderName, receiverName, msg , socketId })
     }
 
-    function sendUsername(){
-        socket.emit("user-connected" , { senderName , socketId })
+    function sendUsername(e : any){
+        e.preventDefault()
+        socket.emit("user-connected" , { senderName  , socketId })
+        setConfirmSenderName(senderName)
+        setSenderName("")
     }
 
     return (
@@ -49,6 +62,11 @@ export default function ChatPage() {
                 <input type="text" value={senderName} onChange={(e)=>setSenderName(e.target.value)} placeholder="enter senderId" className="border border=black"/>
                 {/* when connecting to other service . user details will from jwt stored in cookies */}
                 <button onClick={sendUsername}>send user details to server</button>
+            </div>
+            <div>your name {confirmSenderName}</div>
+            <div className="mt -10">
+                Messages
+                <div>{gotMsgFrom} : {gotMsg}</div>
             </div>
         </div>
     )
