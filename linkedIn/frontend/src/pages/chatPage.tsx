@@ -5,31 +5,37 @@ import { io } from "socket.io-client"
 const socket = io("http://localhost:4000")
 
 
+interface msgType {
+    msg: String
+    senderName: String
+}
 
 export default function ChatPage() {
     const [senderName, setSenderName] = useState("")
-    const [confirmSenderName , setConfirmSenderName] = useState("")
+    const [confirmSenderName, setConfirmSenderName] = useState("")
     const { receiverName } = useParams()
     const [msg, setMsg] = useState("")
-    const [socketId , setSocketId] = useState("")
+    const [socketId, setSocketId] = useState("")
 
-    const [gotMsgFrom , setGotMsgFrom] = useState("")
-    const [gotMsg , setGotMsg] = useState("")
+    const [allMsgs, setAllMsgs] = useState<msgType[]>([])
+    const [gotMsgFrom, setGotMsgFrom] = useState("")
+    const [gotMsg, setGotMsg] = useState("")
 
     useEffect(() => {
         socket.on("connect", () => {
-            console.log("connected to socket" , socket.id)
+            console.log("connected to socket", socket.id)
             setSocketId(socket.id!)
         })
 
-        socket.on("socket-added" , (data)=>{
+        socket.on("socket-added", (data) => {
             console.log(data)
         })
-        
-        socket.on("rcv-msg" , ({confirmSenderName , msg}) =>{
-            console.log("got msg from " , confirmSenderName , msg)
-            setGotMsgFrom(confirmSenderName)
-            setGotMsg(msg)
+
+        socket.on("rcv-msg", ({ confirmSenderName, msg }) => {
+            console.log("got msg from ", confirmSenderName, msg)
+            // setGotMsgFrom(confirmSenderName)
+            // setGotMsg(msg)
+            setAllMsgs(prev => [...prev , { msg, senderName: confirmSenderName }])
         })
 
         return () => {
@@ -38,12 +44,12 @@ export default function ChatPage() {
     }, [])
 
     function submitMsg() {
-        socket.emit("send-msg", { confirmSenderName, receiverName, msg , socketId })
+        socket.emit("send-msg", { confirmSenderName, receiverName, msg, socketId })
     }
 
-    function sendUsername(e : any){
+    function sendUsername(e: any) {
         e.preventDefault()
-        socket.emit("user-connected" , { senderName  , socketId })
+        socket.emit("user-connected", { senderName, socketId })
         setConfirmSenderName(senderName)
         setSenderName("")
     }
@@ -59,14 +65,16 @@ export default function ChatPage() {
             </div>
             <div>
                 <h1>Sender Name</h1>
-                <input type="text" value={senderName} onChange={(e)=>setSenderName(e.target.value)} placeholder="enter senderId" className="border border=black"/>
+                <input type="text" value={senderName} onChange={(e) => setSenderName(e.target.value)} placeholder="enter senderId" className="border border=black" />
                 {/* when connecting to other service . user details will from jwt stored in cookies */}
                 <button onClick={sendUsername}>send user details to server</button>
             </div>
             <div>your name {confirmSenderName}</div>
             <div className="mt -10">
                 Messages
-                <div>{gotMsgFrom} : {gotMsg}</div>
+                {allMsgs.map((v , i)=>{
+                    return <div key={i}>{v.senderName} - {v.msg}</div>
+                })}
             </div>
         </div>
     )
