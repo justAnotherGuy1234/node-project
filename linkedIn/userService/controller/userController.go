@@ -96,10 +96,13 @@ func (uc *UserControllerImpl) LoginUser(w http.ResponseWriter, r *http.Request) 
 
 	res := uc.db.QueryRow(query1, loginUser.Email).Scan(&userData.id, &userData.username, &userData.email, &userData.password)
 
+	fmt.Println("hashed password", userData.password)
+
 	verifyPassword := bcrypt.CompareHashAndPassword([]byte(userData.password), []byte(loginUser.Password))
 
 	if verifyPassword != nil {
 		http.Error(w, "incorrect password", 400)
+		fmt.Println("verify password error", verifyPassword)
 		return
 	}
 

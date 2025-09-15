@@ -17,6 +17,6 @@ func NewProtectedRoute(controller controller.ProtectedController) Router {
 }
 
 func (pr *ProtectedRoute) Register(r chi.Router) {
-	r.Post("/", pr.protectedController.ProtectedRoute)
+	r.Get("/", pr.protectedController.ProtectedRoute)
 	r.Get("/info", pr.protectedController.GetUserData)
 }
