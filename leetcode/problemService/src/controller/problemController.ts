@@ -38,5 +38,20 @@ export const ProblemController = {
                 msg: "Internal server error"
             })
         }
+    },
+
+    async getProblemById(req : Request , res : Response){
+        const Id = req.params.id
+        const problemId = parseInt(Id)
+        const problem = await problemService.getProblemByIdService(problemId)
+
+        if(!problem){
+            return res.json("failed to get problem with given id")
+        }
+
+        return res.json({
+            "msg" : "got problem with id",
+            "data" : problem
+        })
     }
 }

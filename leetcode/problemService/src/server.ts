@@ -9,5 +9,5 @@ app.use(express.json())
 app.use("/api/v0/problem" , problemRouter)
 
 app.listen(5000, () => {
-    console.log("server started at port")
+    console.log("server started at port 5000")
 })

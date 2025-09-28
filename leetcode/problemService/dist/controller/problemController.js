@@ -42,5 +42,19 @@ exports.ProblemController = {
                 });
             }
         });
+    },
+    getProblemById(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const Id = req.params.id;
+            const problemId = parseInt(Id);
+            const problem = yield problemService.getProblemByIdService(problemId);
+            if (!problem) {
+                return res.json("failed to get problem with given id");
+            }
+            return res.json({
+                "msg": "got problem with id",
+                "data": problem
+            });
+        });
     }
 };

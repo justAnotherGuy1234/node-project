@@ -9,5 +9,6 @@ const router = express.Router()
 
 
 router.post("/create" , ProblemController.createProblem)
+router.get("/:id" , ProblemController.getProblemById)
 
 export default router

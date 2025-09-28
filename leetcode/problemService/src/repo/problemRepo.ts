@@ -5,6 +5,7 @@ const prisma = new PrismaClient()
 
 export interface IProblemRepo {
     createProblem(problem : problemDto ) : Promise<any>
+    getProblemById(problemId : number) : Promise<any>
 }
 
 
@@ -29,5 +30,15 @@ export class ProblemRepo implements IProblemRepo {
         })
         
         return newProblem; 
+    }
+
+    async getProblemById(problemId : number): Promise<any> {
+        const problem = await prisma.problem.findUnique({where : {id : problemId} , include : {testCase : true}})
+
+        if (!problem){
+            throw new Error("failed to get problem with given id ")
+        }
+
+        return problem
     }
 }

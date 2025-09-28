@@ -9,5 +9,5 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use("/api/v0/problem", problemRoute_1.default);
 app.listen(5000, () => {
-    console.log("server started at port");
+    console.log("server started at port 5000");
 });

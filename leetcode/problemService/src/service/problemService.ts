@@ -4,6 +4,7 @@ import { IProblemRepo } from "../repo/problemRepo";
 
 export interface IProblemService {
     createProblemService(problem : problemDto) :Promise<any>
+    getProblemByIdService(problemId : number) : Promise<any>
 }
 
 export class ProblemService implements IProblemService {
@@ -26,6 +27,17 @@ export class ProblemService implements IProblemService {
         if(!problem){
             console.log("error in create problem service ")
             throw new Error("failed to create problem")
+        }
+
+        return problem
+    }
+
+    async getProblemByIdService(problemId: number): Promise<any> {
+        const problem = await this.problemRepo.getProblemById(problemId)
+
+        if(!problem){
+            console.log("error in get problm by id service" , problemId)
+            throw new Error("failed to get problem with given id")
         }
 
         return problem

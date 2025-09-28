@@ -34,5 +34,14 @@ class ProblemRepo {
             return newProblem;
         });
     }
+    getProblemById(problemId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const problem = yield prisma.problem.findUnique({ where: { id: problemId }, include: { testCase: true } });
+            if (!problem) {
+                throw new Error("failed to get problem with given id ");
+            }
+            return problem;
+        });
+    }
 }
 exports.ProblemRepo = ProblemRepo;

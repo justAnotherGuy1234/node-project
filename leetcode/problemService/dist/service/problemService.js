@@ -28,5 +28,15 @@ class ProblemService {
             return problem;
         });
     }
+    getProblemByIdService(problemId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const problem = yield this.problemRepo.getProblemById(problemId);
+            if (!problem) {
+                console.log("error in get problm by id service", problemId);
+                throw new Error("failed to get problem with given id");
+            }
+            return problem;
+        });
+    }
 }
 exports.ProblemService = ProblemService;

@@ -7,4 +7,5 @@ const express_1 = __importDefault(require("express"));
 const problemController_1 = require("../controller/problemController");
 const router = express_1.default.Router();
 router.post("/create", problemController_1.ProblemController.createProblem);
+router.get("/:id", problemController_1.ProblemController.getProblemById);
 exports.default = router;

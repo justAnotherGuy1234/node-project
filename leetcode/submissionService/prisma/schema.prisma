@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+//todo add take user details  like userId when submission 
+
+model SubmissionService {
+  id Int @id @default(autoincrement())
+  problemId Int
+  code String
+  language LanguageSupport
+  status Status @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum LanguageSupport {
+  CPP
+  PYTHON
+}
+
+enum Status {
+  PENDING
+  RUNNING
+  ACCEPTED
+  WRONG_ANSWER
+}
