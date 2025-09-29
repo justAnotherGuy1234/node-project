@@ -15,8 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const evaluation_worker_1 = require("./worker/evaluation.worker");
 const pullingImage_1 = require("./util/container/pullingImage");
-const createContainer_1 = require("./util/container/createContainer");
-const contants_1 = require("./util/contants");
+const runPythonCode_1 = require("./util/container/runPythonCode");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.listen(8000, () => __awaiter(void 0, void 0, void 0, function* () {
@@ -25,10 +24,14 @@ app.listen(8000, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("worker started successfully in evaluation service");
     yield (0, pullingImage_1.pullImage)("python:3.8-slim");
     console.log("image pulled successfully");
-    const container = yield (0, createContainer_1.createContainer)({
-        imageName: contants_1.PYTHON_IMAGE,
-        cmdExecutable: ['echo', 'hello world'],
-        memoryLimit: 1024 * 1024 * 1024
-    });
-    yield (container === null || container === void 0 ? void 0 : container.start());
+    yield testCode();
 }));
+function testCode() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const code = `
+print("Hello world") 
+print("bye") 
+    `;
+        yield (0, runPythonCode_1.runPythonCode)(code);
+    });
+}
