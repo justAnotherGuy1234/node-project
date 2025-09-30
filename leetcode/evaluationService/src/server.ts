@@ -1,10 +1,10 @@
 import express from "express"
 import { startWorker } from "./worker/evaluation.worker"
-import { pullImage } from "./util/container/pullingImage"
+import { pullAllImages, pullImage } from "./util/container/pullingImage"
 import { createContainer } from "./util/container/createContainer"
-import { PYTHON_IMAGE } from "./util/contants"
+import { CPP_IMAGE, PYTHON_IMAGE } from "./util/contants"
 import { Container } from "dockerode"
-import { runPythonCode } from "./util/container/runPythonCode"
+import { runCode } from "./util/container/runCode"
 
 const app = express()
 
@@ -17,17 +17,41 @@ app.listen(8000, async () => {
 
     console.log("worker started successfully in evaluation service")
 
-    await pullImage("python:3.8-slim")
+    await pullAllImages()
 
     console.log("image pulled successfully")
 
-    await testCode()
+    //await testCode()
+    await testCppCode()
 })
 
 async function testCode() {
     const code = `
-print("Hello world") 
-print("bye") 
+print("hello")
+print("bye")
     `
-    await runPythonCode(code)
+    await runCode({
+        code : code,
+        timeLimit : 3000,
+        language : "python",
+        imageName : PYTHON_IMAGE
+    })
+}
+
+async function testCppCode(){
+    const code = `
+#include<iostream>
+
+int main(){
+    std::cout<<"hello world";
+    return 0;
+}
+    `
+
+    await runCode({
+        code : code,
+        language : "cpp",
+        timeLimit : 1000,
+        imageName : CPP_IMAGE
+    })
 }
