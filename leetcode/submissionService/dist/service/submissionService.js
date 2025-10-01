@@ -41,5 +41,14 @@ class SubmissionService {
             return submission;
         });
     }
+    updateSubmissionService(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const submission = yield this.submissionRepo.updateSubmissionStatusRepo(data);
+            if (!submission) {
+                throw new Error("failed to update submission status");
+            }
+            return submission;
+        });
+    }
 }
 exports.SubmissionService = SubmissionService;

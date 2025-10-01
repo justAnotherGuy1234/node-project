@@ -24,5 +24,22 @@ exports.submissionController = {
                 "data": submission
             });
         });
+    },
+    updateStatus(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = parseInt(req.params.id);
+            const submissionId = id;
+            const { status } = req.body;
+            const submission = yield submissionService.updateSubmissionService({ submissionId, status });
+            if (!submission) {
+                return res.status(500).json({
+                    "msg": "failed to update submission status"
+                });
+            }
+            return res.json({
+                "msg": "updated submission status successffully",
+                "data": submission
+            });
+        });
     }
 };

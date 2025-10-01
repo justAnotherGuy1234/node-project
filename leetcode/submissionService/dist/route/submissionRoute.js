@@ -7,4 +7,5 @@ const express_1 = __importDefault(require("express"));
 const submissionController_1 = require("../controller/submissionController");
 const router = express_1.default.Router();
 router.post("/create", submissionController_1.submissionController.createSubmission);
+router.patch("/:id/status", submissionController_1.submissionController.updateStatus);
 exports.default = router;

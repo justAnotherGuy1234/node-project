@@ -1,11 +1,11 @@
 import { getProblemByIdApi } from "../api/problemServiceApi";
-import { createSubmissionDto } from "../dto/submissionDto";
+import { createSubmissionDto, updateSubmissionDto } from "../dto/submissionDto";
 import { SubmissionProducer } from "../producer/submissionProducer";
 import { ISubmissionRepo } from "../repo/submissionRepo";
 
 export interface ISubmissionService {
     createSubmissionService(data : createSubmissionDto) :Promise<any>
-
+    updateSubmissionService(data : updateSubmissionDto) : Promise<any>
     //todo
     //findByIdService(data : SubmissionId)
     //findByProblemIdService(data : ProblemId)
@@ -50,4 +50,16 @@ export class SubmissionService implements ISubmissionService {
 
        return submission
     }
+
+    async updateSubmissionService(data: updateSubmissionDto): Promise<any> {
+       const submission = await this.submissionRepo.updateSubmissionStatusRepo(data)
+
+       if(!submission){
+        throw new Error("failed to update submission status")
+       }
+
+       return submission
+
+    }
+
 }

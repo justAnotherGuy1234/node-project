@@ -5,9 +5,10 @@ import { createContainer } from "./createContainer";
 
 interface RunCodeOptions  {
     code : string,
-    language : "python" | "cpp",
+    language : "PYTHON" | "CPP" 
     timeLimit : number,
-    imageName : string
+    imageName : string,
+    input : string 
 }
 
 
@@ -17,13 +18,16 @@ export async function runCode(options : RunCodeOptions){
     
     const container = await createContainer({
         imageName : options.imageName ,
-        cmdExecutable : commands[options.language](options.code),
+        cmdExecutable : commands[options.language](options.code , options.input),
         memoryLimit : 1024 * 1024 * 1024
     })
 
-    const timeLimitExeded = setTimeout(async ()=>{
-        console.log("time limit exceded")
-        await container?.kill()
+    let isTimeLimitExceed : boolean = false
+
+    const timeLimitExeded = setTimeout( ()=>{
+        console.log("time_limit_exceded")
+        isTimeLimitExceed = true
+        container?.kill()
     } , options.timeLimit)
 
     await container?.start()
@@ -34,10 +38,20 @@ export async function runCode(options : RunCodeOptions){
 
     console.log("container status"  , status)
 
+    if(isTimeLimitExceed){
+        await container?.remove()
+        return {
+            "status" : "time_limit_exceeded",
+            "output" : "time limit exceeded"
+        }
+    }
+
     const logs = await container?.logs({
         stdout : true ,
         stderr : true
     })
+
+    const containerLogs = processLogs(logs)
 
     console.log("logs " , logs?.toString())
 
@@ -46,9 +60,24 @@ export async function runCode(options : RunCodeOptions){
     if(status.StatusCode == 0){
         clearTimeout(timeLimitExeded)
         console.log("container exited successfully")
+        return {
+            "status" : "success",
+            "output" : containerLogs
+        }
     }else {
         clearTimeout(timeLimitExeded)
         console.log("error during runinng code ")
+        return {
+            "status" : "failed",
+            "output" : containerLogs
+        }
     }
 
+}
+
+function processLogs(logs : Buffer | undefined){
+    return logs?.toString('utf-8')
+    .replace(/\x00/g,'') // remove all extra bytes from container logs
+    .replace (/[\x00-\x09\x0B-\x1F\x7F-\x9F]/g , '')
+    .trim()
 }

@@ -17,41 +17,43 @@ app.listen(8000, async () => {
 
     console.log("worker started successfully in evaluation service")
 
-    await pullAllImages()
+    //await pullAllImages()
 
-    console.log("image pulled successfully")
+    //console.log("image pulled successfully")
 
     //await testCode()
-    await testCppCode()
+    //await testCppCode()
 })
 
-async function testCode() {
-    const code = `
-print("hello")
-print("bye")
-    `
-    await runCode({
-        code : code,
-        timeLimit : 3000,
-        language : "python",
-        imageName : PYTHON_IMAGE
-    })
-}
+// async function testCode() {
+//     const code = `
+// print("hello")
+// print("bye")
+//     `
+//     await runCode({
+//         code : code,
+//         timeLimit : 3000,
+//         language : "PYTHON",
+//         imageName : PYTHON_IMAGE,
+//         input : "6"
+//     })
+// }
 
-async function testCppCode(){
-    const code = `
-#include<iostream>
+// async function testCppCode(){
+//     const code = `
+// #include<iostream>
 
-int main(){
-    std::cout<<"hello world";
-    return 0;
-}
-    `
+// int main(){
+//     std::cout<<"hello world";
+//     return 0;
+// }
+//     `
 
-    await runCode({
-        code : code,
-        language : "cpp",
-        timeLimit : 1000,
-        imageName : CPP_IMAGE
-    })
-}
+//     await runCode({
+//         code : code,
+//         language : "CPP",
+//         timeLimit : 1000,
+//         imageName : CPP_IMAGE,
+//         input : "8"
+//     })
+// }

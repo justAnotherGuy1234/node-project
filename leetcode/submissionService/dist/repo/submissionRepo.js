@@ -27,5 +27,14 @@ class SubmissionRepo {
             return submission;
         });
     }
+    updateSubmissionStatusRepo(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const submission = yield prisma.submissionService.update({ where: { id: data.submissionId }, data: { status: data.status } });
+            if (!submission) {
+                throw new Error("failed to update submission status");
+            }
+            return submission;
+        });
+    }
 }
 exports.SubmissionRepo = SubmissionRepo;

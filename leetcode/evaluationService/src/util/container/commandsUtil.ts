@@ -1,10 +1,10 @@
 export const commands = {
-    python : function(code : string){
-        const runCmd = `echo '${code}' > code.py && python3 code.py`; 
+    PYTHON : function(code : string , input : string ){
+        const runCmd = `echo '${code}' > code.py  && echo '${input}' > input.txt && python3 code.py < input.txt`; 
         return ['/bin/bash' , '-c' , runCmd]
     },
-    cpp : function(code : string){
-        const runCmd = `mkdir app && cd app && echo '${code}' > code.cpp && g++ code.cpp -o run && ./run`; 
+    CPP : function(code : string , input : string ){
+        const runCmd = `mkdir app && cd app && echo '${code}' > code.cpp  && echo '${input}' > input.txt && g++ code.cpp -o run && ./run < input.txt`; 
         return ['/bin/bash' , '-c' , runCmd]
     }
 

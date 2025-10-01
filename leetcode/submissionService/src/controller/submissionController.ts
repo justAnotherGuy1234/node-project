@@ -16,5 +16,24 @@ export const submissionController = {
             "msg" : "created submission successfully",
             "data" : submission
         })
+    },
+
+    async updateStatus(req : Request , res : Response){
+        const id = parseInt(req.params.id)
+        const submissionId = id
+        const {status} = req.body
+
+        const submission  = await submissionService.updateSubmissionService({submissionId , status})
+
+        if(!submission){
+            return res.status(500).json({
+                "msg" : "failed to update submission status"
+            })
+        }
+
+        return res.json({
+            "msg" : "updated submission status successffully",
+            "data" : submission
+        })
     }
 }
